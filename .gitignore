@@ -1,0 +1,3 @@
+secrets/mysql
+secrets/mysqlroot
+docker-entrypoint-initdb.d/99-backup.sql

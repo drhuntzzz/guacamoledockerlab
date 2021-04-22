@@ -6,21 +6,28 @@ services:
       - db_data:/var/lib/mysql
       - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     restart: always
-#    ports:
-#      - 33060:3306
+    ports:
+      - 33060:3306
+    secrets:
+      - mysql
+      - mysqlroot
     environment:
-      MYSQL_ROOT_PASSWORD: HJKJHBHJKBUYGYUIUYBTYIGUYGGTUI
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysqlroot
       MYSQL_DATABASE: guacamole
       MYSQL_USER: gucamoleuser
-      MYSQL_PASSWORD: guacamoleGYH4JB3YJ53HBO3U
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql
       GUACAMOLE_ADMIN: drhuntzzz@gmail.com
   guacd:
     image: guacamole/guacd:latest
     restart: always
+    deploy:
+      replicas: 4
   guacamole:
     depends_on:
       - guacd
     image: guacamole/guacamole:latest
+    secrets:
+      - mysql
     environment:
       OPENID_AUTHORIZATION_ENDPOINT: https://login.microsoftonline.com/e0f9fac3-bc65-40cf-8d0e-5c6809f9d3cd/oauth2/v2.0/authorize
       OPENID_JWKS_ENDPOINT: https://login.microsoftonline.com/e0f9fac3-bc65-40cf-8d0e-5c6809f9d3cd/discovery/v2.0/keys
@@ -31,9 +38,14 @@ services:
       MYSQL_HOSTNAME: db
       MYSQL_DATABASE: guacamole
       MYSQL_USER: gucamoleuser
-      MYSQL_PASSWORD: guacamoleGYH4JB3YJ53HBO3U
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql
     ports:
       - "8080:8080"
     restart: always
 volumes:
   db_data: {}
+secrets:
+  mysqlroot:
+    file: ./secrets/mysqlroot
+  mysql:
+    file: ./secrets/mysql
