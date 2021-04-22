@@ -1,0 +1,39 @@
+version: "3.3"
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    restart: always
+#    ports:
+#      - 33060:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: HJKJHBHJKBUYGYUIUYBTYIGUYGGTUI
+      MYSQL_DATABASE: guacamole
+      MYSQL_USER: gucamoleuser
+      MYSQL_PASSWORD: guacamoleGYH4JB3YJ53HBO3U
+      GUACAMOLE_ADMIN: drhuntzzz@gmail.com
+  guacd:
+    image: guacamole/guacd:latest
+    restart: always
+  guacamole:
+    depends_on:
+      - guacd
+    image: guacamole/guacamole:latest
+    environment:
+      OPENID_AUTHORIZATION_ENDPOINT: https://login.microsoftonline.com/e0f9fac3-bc65-40cf-8d0e-5c6809f9d3cd/oauth2/v2.0/authorize
+      OPENID_JWKS_ENDPOINT: https://login.microsoftonline.com/e0f9fac3-bc65-40cf-8d0e-5c6809f9d3cd/discovery/v2.0/keys
+      OPENID_ISSUER: https://login.microsoftonline.com/e0f9fac3-bc65-40cf-8d0e-5c6809f9d3cd/v2.0
+      OPENID_CLIENT_ID: d56bb95d-78a4-4fd8-a4a7-80e5172552ce
+      OPENID_REDIRECT_URI: https://guacamole.lan.drhunt.us/guacamole/
+      GUACD_HOSTNAME: guacd
+      MYSQL_HOSTNAME: db
+      MYSQL_DATABASE: guacamole
+      MYSQL_USER: gucamoleuser
+      MYSQL_PASSWORD: guacamoleGYH4JB3YJ53HBO3U
+    ports:
+      - "8080:8080"
+    restart: always
+volumes:
+  db_data: {}
