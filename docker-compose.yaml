@@ -21,7 +21,7 @@ services:
     image: guacamole/guacd:latest
     restart: always
     deploy:
-      replicas: 4
+      replicas: 1
   guacamole:
     depends_on:
       - guacd
